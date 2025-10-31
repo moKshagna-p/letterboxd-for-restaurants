@@ -5,6 +5,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, Clock, UtensilsCrossed, Loader2 } from "lucide-react";
 import RestaurantStorage from "../utils/restaurantStorage";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "./ui/card";
+import { Button } from "./ui/button";
 
 interface CuratedRestaurant {
   id: string;
@@ -157,19 +165,17 @@ export default function CuratedLists() {
 
   if (loading) {
     return (
-      <section className="bg-white dark:bg-gray-800 py-16">
+      <section className="py-16">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Curated Lists
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h2 className="text-3xl font-bold mb-4">Curated Lists</h2>
+            <p className="text-muted-foreground">
               Discovering the best restaurants near you...
             </p>
           </div>
           <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
-            <span className="ml-3 text-gray-600 dark:text-gray-400">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ml-3 text-muted-foreground">
               Loading curated lists...
             </span>
           </div>
@@ -179,92 +185,88 @@ export default function CuratedLists() {
   }
 
   return (
-    <section className="bg-white dark:bg-gray-800 py-16">
+    <section className="py-16">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Curated Lists
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-3xl font-bold mb-4">Curated Lists</h2>
+          <p className="text-muted-foreground">
             Handpicked collections of the best restaurants near you
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {lists.map((list) => (
-            <div
-              key={list.id}
-              className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="text-3xl">{list.icon}</div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {list.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {list.description}
-                  </p>
+            <Card key={list.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">{list.icon}</div>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl">{list.title}</CardTitle>
+                    <CardDescription>{list.description}</CardDescription>
+                  </div>
                 </div>
-              </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {list.restaurants.length > 0 ? (
+                    list.restaurants.map((restaurant) => (
+                      <Link
+                        key={restaurant.placeId}
+                        href={`/restaurants/google/${restaurant.placeId}`}
+                        className="block p-3 bg-muted rounded-lg hover:bg-accent transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Restaurant Image */}
+                          <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-pink-400 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {restaurant.photoUrl ? (
+                              <Image
+                                src={restaurant.photoUrl}
+                                alt={restaurant.name}
+                                width={48}
+                                height={48}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                                unoptimized={true}
+                              />
+                            ) : (
+                              <div className="text-white text-lg">🍽️</div>
+                            )}
+                          </div>
 
-              <div className="space-y-3">
-                {list.restaurants.length > 0 ? (
-                  list.restaurants.map((restaurant) => (
-                    <Link
-                      key={restaurant.placeId}
-                      href={`/restaurants/google/${restaurant.placeId}`}
-                      className="block p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        {/* Restaurant Image */}
-                        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-pink-400 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {restaurant.photoUrl ? (
-                            <Image
-                              src={restaurant.photoUrl}
-                              alt={restaurant.name}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.display = "none";
-                              }}
-                              unoptimized={true}
-                            />
-                          ) : (
-                            <div className="text-white text-lg">🍽️</div>
-                          )}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-gray-900 dark:text-white text-sm truncate">
-                            {restaurant.name}
-                          </h4>
-                          <div className="flex items-center gap-1 mt-1">
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs text-gray-600 dark:text-gray-400">
-                              {restaurant.rating}
-                            </span>
-                            <span className="text-xs text-gray-500">•</span>
-                            <span className="text-xs text-gray-500 truncate">
-                              {restaurant.address.split(",")[0]}
-                            </span>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-sm truncate">
+                              {restaurant.name}
+                            </h4>
+                            <div className="flex items-center gap-1 mt-1">
+                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs text-muted-foreground">
+                                {restaurant.rating}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                •
+                              </span>
+                              <span className="text-xs text-muted-foreground truncate">
+                                {restaurant.address.split(",")[0]}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
-                    No restaurants found for this category
-                  </div>
-                )}
-              </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground text-sm">
+                      No restaurants found for this category
+                    </div>
+                  )}
+                </div>
 
-              <button className="w-full mt-4 text-orange-600 hover:text-orange-700 font-medium text-sm">
-                View All →
-              </button>
-            </div>
+                <Button variant="ghost" className="w-full mt-4" size="sm">
+                  View All →
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

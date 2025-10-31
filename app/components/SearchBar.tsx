@@ -4,6 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, MapPin, Loader2 } from "lucide-react";
 import AuthStorage from "../utils/authStorage";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,18 +105,21 @@ export default function SearchBar() {
 
   return (
     <div className="max-w-2xl mx-auto mb-12">
-      <div className="flex gap-3 p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700">
-        <MapPin className="w-6 h-6 text-orange-600 ml-4" />
-        <select
-          value={mode}
-          onChange={(e) => setMode(e.target.value as any)}
-          className="bg-transparent text-gray-900 dark:text-white border-r border-gray-200 dark:border-gray-700 pr-3"
-        >
-          <option value="restaurants">Restaurants</option>
-          <option value="profiles">Profiles</option>
-          <option value="lists">Lists</option>
-        </select>
-        <input
+      <div className="flex gap-2 p-2 bg-card rounded-full shadow-lg border">
+        <div className="flex items-center pl-4 pr-2">
+          <MapPin className="w-5 h-5 text-primary" />
+        </div>
+        <Select value={mode} onValueChange={(value: any) => setMode(value)}>
+          <SelectTrigger className="w-[140px] border-0 shadow-none bg-transparent">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="restaurants">Restaurants</SelectItem>
+            <SelectItem value="profiles">Profiles</SelectItem>
+            <SelectItem value="lists">Lists</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -119,23 +131,29 @@ export default function SearchBar() {
               ? "Search user profiles..."
               : "Search your lists..."
           }
-          className="flex-1 bg-transparent outline-none text-gray-900 dark:text-white placeholder-gray-500"
+          className="flex-1 border-0 shadow-none focus-visible:ring-0 bg-transparent"
           disabled={isSearching}
         />
-        <button
+        <Button
           onClick={handleSearch}
           disabled={isSearching}
-          className="bg-orange-600 text-white px-8 py-3 rounded-full hover:bg-orange-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          size="lg"
+          className="rounded-full"
         >
           {isSearching ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Searching...
+            </>
           ) : (
-            <Search className="w-5 h-5" />
+            <>
+              <Search className="w-4 h-4" />
+              Search
+            </>
           )}
-          {isSearching ? "Searching..." : "Search"}
-        </button>
+        </Button>
       </div>
-      <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-2">
+      <p className="text-sm text-muted-foreground text-center mt-2">
         Search all restaurants in Chennai
       </p>
     </div>

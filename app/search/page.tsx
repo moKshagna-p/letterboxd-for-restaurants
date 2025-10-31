@@ -15,6 +15,15 @@ import {
 import AddToList from "../components/AddToList";
 import AuthStorage from "../utils/authStorage";
 import RestaurantStorage from "../utils/restaurantStorage";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardFooter } from "../components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 
 interface SearchResult {
   id: string;
@@ -149,34 +158,35 @@ export default function SearchResults() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm">
+      <div className="bg-card shadow-sm border-b">
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-orange-600 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
+            <Button onClick={() => router.back()} variant="ghost" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Back
-            </button>
+            </Button>
 
             <div className="flex items-center gap-4">
-              <select
+              <Select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                onValueChange={(value: any) => setSortBy(value)}
               >
-                <option value="rating">Sort by Rating</option>
-                <option value="name">Sort by Name</option>
-                <option value="distance">Sort by Distance</option>
-              </select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rating">Sort by Rating</SelectItem>
+                  <SelectItem value="name">Sort by Name</SelectItem>
+                  <SelectItem value="distance">Sort by Distance</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className="mt-4">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold">
               {type === "profiles"
                 ? `Profiles matching "${query}"`
                 : type === "lists"
@@ -184,7 +194,7 @@ export default function SearchResults() {
                 : `Search Results for "${query}"`}
             </h1>
             {type === "restaurants" && (
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground">
                 Found {results.length} restaurants in Chennai
               </p>
             )}
@@ -294,9 +304,9 @@ export default function SearchResults() {
         ) : sortedResults.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedResults.map((restaurant) => (
-              <div
+              <Card
                 key={restaurant.placeId}
-                className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-200 dark:border-gray-700 group"
+                className="overflow-hidden hover:shadow-xl transition-all group"
               >
                 {/* Restaurant Image */}
                 <div className="h-48 bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center overflow-hidden">
@@ -317,72 +327,73 @@ export default function SearchResults() {
                   )}
                 </div>
 
-                <div className="p-6">
+                <CardContent className="p-6">
                   <Link
                     href={`/restaurants/google/${restaurant.placeId}`}
                     className="block"
                   >
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-1">
+                    <h3 className="text-xl font-bold mb-2 line-clamp-1">
                       {restaurant.name}
                     </h3>
                     <div className="flex items-center gap-1 mb-3">
                       <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-gray-900 dark:text-white">
+                      <span className="font-semibold">
                         {restaurant.rating || 0}
                       </span>
-                      <span className="text-gray-500 text-sm">
+                      <span className="text-muted-foreground text-sm">
                         ({restaurant.reviewCount} reviews)
                       </span>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                    <p className="text-muted-foreground mb-4 line-clamp-2">
                       {restaurant.address}
                     </p>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4" />
                       <span>In Chennai</span>
                     </div>
                   </Link>
+                </CardContent>
 
-                  {/* Add to List Button */}
-                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <AddToList
-                      restaurant={{
-                        id: restaurant.id,
-                        name: restaurant.name,
-                        address: restaurant.address,
-                        rating: restaurant.rating,
-                        reviewCount: restaurant.reviewCount,
-                        photoUrl: restaurant.photoUrl,
-                        openNow: restaurant.openNow,
-                        placeId: restaurant.placeId,
-                        types: restaurant.types,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                {/* Add to List Button */}
+                <CardFooter className="pt-0 pb-6 px-6">
+                  <AddToList
+                    restaurant={{
+                      id: restaurant.id,
+                      name: restaurant.name,
+                      address: restaurant.address,
+                      rating: restaurant.rating,
+                      reviewCount: restaurant.reviewCount,
+                      photoUrl: restaurant.photoUrl,
+                      openNow: restaurant.openNow,
+                      placeId: restaurant.placeId,
+                      types: restaurant.types,
+                    }}
+                  />
+                </CardFooter>
+              </Card>
             ))}
           </div>
         ) : (
           <div className="text-center py-12">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-xl font-semibold mb-2">
               {type === "profiles"
                 ? "No profiles found"
                 : type === "lists"
                 ? "No lists found"
                 : "No restaurants found"}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-muted-foreground mb-6">
               {type === "restaurants"
                 ? "Try adjusting your search terms or location"
                 : "Try a different query"}
             </p>
-            <button
+            <Button
               onClick={() => router.back()}
-              className="bg-orange-600 text-white px-6 py-3 rounded-full hover:bg-orange-700 transition-colors"
+              size="lg"
+              className="rounded-full"
             >
               Try Again
-            </button>
+            </Button>
           </div>
         )}
       </div>

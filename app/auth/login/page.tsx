@@ -3,6 +3,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthStorage from "../../utils/authStorage";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Alert, AlertDescription } from "../../components/ui/alert";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,40 +38,44 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          Log in
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
-              Username or Email
-            </label>
-            <input
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent text-gray-900 dark:text-white"
-              required
-            />
-          </div>
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700"
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-b from-background to-muted/20">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Log in</CardTitle>
+          <CardDescription>
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="identifier">Username or Email</Label>
+              <Input
+                id="identifier"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="Enter your username or email"
+                required
+              />
+            </div>
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            <Button type="submit" className="w-full" size="lg">
+              Log in
+            </Button>
+          </form>
+          <Button
+            variant="ghost"
+            className="w-full mt-4"
+            onClick={() => router.push("/auth/signup")}
           >
-            Log in
-          </button>
-        </form>
-        <button
-          className="w-full mt-4 text-sm text-gray-600 dark:text-gray-300"
-          onClick={() => router.push("/auth/signup")}
-        >
-          Create an account
-        </button>
-      </div>
+            Create an account
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
-
-
